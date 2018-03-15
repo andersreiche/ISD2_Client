@@ -27,6 +27,8 @@ void sig_exit(int s) {
 }
 
 int main(int argc, char *argv[]) {
+
+    /* Input error handling */
     if (argc == 2 && string(argv[1]).length() == 2) {
         target = toint(string(argv[1]));
     } else {
@@ -40,12 +42,12 @@ int main(int argc, char *argv[]) {
         tcp.Send("GETTEMP");
         string rec = tcp.receive();
         if (rec != "") {
-            cout << "Temperature is " << rec  << " degC" << endl;
+            cout << "Temperature is " << rec << " degC" << endl;
             temp = stof(rec);
             /* Instructs the host to turn on/off the heater */
             tcp.Send(tostr(heater(temp, target)));
         }
-        sleep(1);
+        sleep(3);
     }
     return 0;
 }
