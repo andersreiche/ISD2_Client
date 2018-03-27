@@ -37,17 +37,23 @@ int main(int argc, char *argv[]) {
     }
     signal(SIGINT, sig_exit);
 
-    tcp.setup("127.0.0.1", 1955);
+    tcp.setup("127.0.0.1", 1955); // <ip>, <port>
     while (1) {
-        tcp.Send("GETTEMP");
-        string rec = tcp.receive();
-        if (rec != "") {
+        tcp.Send("GETTEMP"); // Always ask the host for the temperature 
+        string rec = tcp.receive(); // calls recv() and does error handling
+        
+        if (rec != "") { // If rec is empty, recieve again
             cout << "Temperature is " << rec << " degC" << endl;
+            
+            /* Convert temperature string to float, making it possible to
+             * compare it to the setpoint in heater() */
             temp = stof(rec);
-            /* Instructs the host to turn on/off the heater */
+            
+            /* Instructs the host to turn on/off the heater by sending a
+             * "1" or a "0" */
             tcp.Send(tostr(heater(temp, target)));
         }
-        sleep(3);
+        sleep(3); // Don't spam the output (temperature changes are slow)
     }
     return 0;
 }
